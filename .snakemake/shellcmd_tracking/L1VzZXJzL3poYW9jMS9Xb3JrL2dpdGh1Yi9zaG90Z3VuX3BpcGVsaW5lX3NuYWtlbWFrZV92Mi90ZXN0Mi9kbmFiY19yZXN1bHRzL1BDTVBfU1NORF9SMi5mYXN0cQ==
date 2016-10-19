@@ -1,4 +1,0 @@
-
-		mkdir -p /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake_v2/test2/summary
-		dnabc.py --forward-reads /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake_v2/test2/Undetermined_S0_L001_R1_001.fastq --reverse-reads /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake_v2/test2/Undetermined_S0_L001_R2_001.fastq 		--barcode-file /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake_v2/test2/barcodes.txt --output-dir /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake_v2/test2/dnabc_results 		--summary-file /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake_v2/test2/summary/summary-dnabc.json
-		
