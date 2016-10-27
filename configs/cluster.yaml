@@ -1,0 +1,50 @@
+__default__: 
+  h_vmem: 4G
+  mem_free: 3G
+  m_mem_free: 2G
+demultiplex: 
+  h_vmem: 100G
+  mem_free: 20G
+  m_mem_free: 10G
+illqc: 
+  h_vmem: 5G
+  mem_free: 4G
+  m_mem_free: 3G
+stitch_reads: 
+  h_vmem: 10G
+  mem_free: 8G
+  m_mem_free: 7G
+decontam_phix_unassembled: 
+  h_vmem: 5G
+  mem_free: 4G
+  m_mem_free: 3G
+decontam_phix_assembled:
+  h_vmem: 10G
+  mem_free: 8G
+  m_mem_free: 7G
+decontam_host_unassembled:
+  h_vmem: 10G
+  mem_free: 8G
+  m_mem_free: 7G
+decontam_host_assembled:
+  h_vmem: 10G
+  mem_free: 8G
+  m_mem_free: 7G
+gzip: 
+  h_vmem: 10G
+  mem_free: 8G
+  m_mem_free: 7G
+  reference: http://www.real-world-systems.com/docs/gzip.1.html
+target_list: 
+  h_vmem: 3G
+  mem_free: 2G
+  m_mem_free: 2G
+  #h_vmem: 55G
+  #mem_free: 44G
+  #m_mem_free: 40G
+  reference: https://www.broadinstitute.org/gatk/guide/article?id=1975
+extractreads: 
+  h_vmem: 55G
+  mem_free: 44G
+  m_mem_free: 38G
+  reference: https://www.broadinstitute.org/gatk/guide/article?id=1975

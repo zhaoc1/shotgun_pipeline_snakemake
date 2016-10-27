@@ -1,0 +1,29 @@
+# customized settings for a project
+
+projdir: /mnt/isilon/microbiome/Hiseq01/XX/Data/Intensities/BaseCalls    # directory for the project; we don't really touch this...
+# we do want to include the transfer part here
+# i also want to include the biodata in the folder of pipeline
+
+admins: zhaoc1@email.chop.edu      # to receive notification of success or fail
+tmpdir: /mnt/lustre/users/zhaoc1/test   # for some tools to create temporary files
+
+
+load_shotgun_pipeline_environment: source activate shotgun-pipeline
+
+
+data_dir: /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake/test
+lane_num: "001"
+
+report:
+    illqc: /illqc_reports
+
+output: # subdirectories in data_dir
+    dnabc: /dnabc_results
+    illqc: /illqc_results
+    stitch: /stitch_results
+    decontam_phix_unassembled: /decontam_phix_unassembled_results
+    decontam_phix_assembled: /decontam_phix_assembled_results
+    decontam_host_unassembled: /decontam_host_unassembled_results
+    decontam_host_assembled: /decontam_host_assembled_results
+
+
