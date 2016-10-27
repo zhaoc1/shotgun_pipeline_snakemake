@@ -1,1 +1,0 @@
-decontaminate.py --forward-reads /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake/test/stitch_results/PCMP_SSNGD.assembled.fastq --output-dir /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake/test/decontam_phix_assembled_results --summary-file /Users/zhaoc1/Work/github/shotgun_pipeline_snakemake/test/summary/PCMP_SSNGD.assembled.decontam.phix.json --organism phix
