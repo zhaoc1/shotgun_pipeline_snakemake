@@ -1,0 +1,8 @@
+rule generate_report:
+	shell:
+		"""
+		preprocess_report.py --illqc-dir summary --decontam-dir summary \
+		--decontam-prefix summary-assembled-decontam-host_ --output-fp preprocess_summary.tsv 
+		
+		fastqc_report.py --input-dir illqc_reports --output-dir {config[data_dir]}
+		"""

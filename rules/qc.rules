@@ -1,0 +1,64 @@
+####################
+## demultiplex + quality control + stitch paired end reads
+####################
+
+## demultiplex 
+rule demultiplex:
+	input:
+		read1 = "Undetermined_S0_L" + config["lane_num"] + "_R1_001.fastq",
+		read2 = "Undetermined_S0_L" + config["lane_num"] + "_R2_001.fastq"
+	output:
+		expand(config["output"]["dnabc"] + "/{sample_id}_{read}.fastq",
+			sample_id=SAMPLE_IDS, read=["R1","R2"])
+	params:
+		dnabc_summary = "summary/dnabc.json"
+	log: "log/dnabc.log"
+	threads: 8
+	shell:
+		"""
+		mkdir -p summary
+		mkdir -p log
+		dnabc.py --forward-reads {input.read1} --reverse-reads {input.read2} \
+		--barcode-file {config[barcodes]} --output-dir {config[output][dnabc]} \
+		--summary-file {params.dnabc_summary} 2> {log}
+		"""
+
+## quality control
+rule illqc:
+	input:
+		read1 = config["output"]["dnabc"] + "/{sample_id}_R1.fastq",
+		read2 = config["output"]["dnabc"] + "/{sample_id}_R2.fastq"
+	output:
+		config["output"]["illqc"] + "/{sample_id}_R1.fastq",
+		config["output"]["illqc"] + "/{sample_id}_R2.fastq"
+	params:
+		illqc_summary = "summary/summary-illqc_{sample_id}.json"
+	threads: 2
+	shell:
+		"illqc.py --forward-reads {input.read1} --reverse-reads {input.read2} "
+		"--output-dir {config[output][illqc]} --qc-output-dir {config[report][illqc]} "
+		"--summary-file {params.illqc_summary}"
+
+## stitch paired-end reads
+rule stitch_reads:
+	input:
+		read1 = config["output"]["illqc"] + "/{sample_id}_R1.fastq",
+		read2 = config["output"]["illqc"] + "/{sample_id}_R2.fastq"
+	output:
+		config["output"]["stitch"] + "/{sample_id}.assembled.fastq",
+		config["output"]["stitch"] + "/{sample_id}.discarded.fastq",
+		config["output"]["stitch"] + "/{sample_id}.unassembled.forward.fastq",
+		config["output"]["stitch"] + "/{sample_id}.unassembled.reverse.fastq"
+	params:
+		prefix = config["output"]["stitch"] + "/{sample_id}",
+		stitch_summary = "summary/summary-stitch_{sample_id}.json",
+		log = "log/{sample_id}.stitch.log"
+	threads: 8 
+	run:
+		shell(
+			"""
+			pear --forward-fastq {input.read1} --reverse-fastq {input.read2} \
+			--output {params.prefix} --threads {threads} --memory {config[stitch][memory]} \
+			1> {params.log}
+			""")
+		generate_stitch_summary_json(params.log,params.stitch_summary)

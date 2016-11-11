@@ -1,0 +1,7 @@
+rule transfer:
+
+rule gunzip:
+
+rule merge:
+
+# prepare the files for input of dnabc

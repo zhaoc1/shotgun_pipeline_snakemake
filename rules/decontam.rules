@@ -1,0 +1,61 @@
+#### decontam the phix and then host sequences
+
+#＃ phix decontamination for unassembled forward and reverse reads pair
+rule decontam_phix_unassembled:
+	input:
+		read1 = config["output"]["stitch"] + "/{sample_id}.unassembled.forward.fastq",
+		read2 = config["output"]["stitch"] + "/{sample_id}.unassembled.reverse.fastq"
+	output:
+		config["output"]["decontam_phix_unassembled"] + "/{sample_id}.unassembled.forward.fastq",
+		config["output"]["decontam_phix_unassembled"] + "/{sample_id}.unassembled.reverse.fastq"
+	params:
+		decontam_phix_summary_unassembled = "summary/summary-unassembled-decontam-phix_{sample_id}.json"
+	threads: 2
+	shell:
+		"decontaminate.py --forward-reads {input.read1} --reverse-reads {input.read2} "
+		"--output-dir {config[output][decontam_phix_unassembled]} "
+		"--summary-file {params.decontam_phix_summary_unassembled} --organism phix"
+
+#＃ human decontamination for unassembled forward and reverse reads pair
+rule decontam_host_unassembled:
+	input:
+		read1 = config["output"]["decontam_phix_unassembled"] + "/{sample_id}.unassembled.forward.fastq",
+		read2 = config["output"]["decontam_phix_unassembled"] + "/{sample_id}.unassembled.reverse.fastq"
+	output:
+		config["output"]["decontam_host_unassembled"] + "/{sample_id}.unassembled.forward.fastq",
+		config["output"]["decontam_host_unassembled"] + "/{sample_id}.unassembled.reverse.fastq"
+	params:
+		decontam_host_summary_unassembled = "summary/summary-unassembled-decontam-host_{sample_id}.json"
+	threads: 2
+	shell:
+		"decontaminate.py --forward-reads {input.read1} --reverse-reads {input.read2} "
+		"--output-dir {config[output][decontam_host_unassembled]} "
+		"--summary-file {params.decontam_host_summary_unassembled} --organism human"
+
+## phix decontamination for assembled reads
+rule decontam_phix_assembled:
+	input:
+		read = config["output"]["stitch"] + "/{sample_id}.assembled.fastq"
+	output:
+		config["output"]["decontam_phix_assembled"] + "/{sample_id}.assembled.fastq"
+	params:
+		decontam_phix_summary_assembled = "summary/summary-assembled-decontam-phix_{sample_id}.json"
+	threads: 2
+	shell:
+		"decontaminate.py --forward-reads {input.read} "
+		"--output-dir {config[output][decontam_phix_assembled]} "
+		"--summary-file {params.decontam_phix_summary_assembled} --organism phix"
+
+## human decontamination for assembled reads
+rule decontam_host_assembled:
+	input:
+		read = config["output"]["decontam_phix_assembled"] + "/{sample_id}.assembled.fastq"
+	output:
+		config["output"]["decontam_host_assembled"] + "/{sample_id}.assembled.fastq"
+	params:
+		decontam_host_summary_assembled = "summary/summary-assembled-decontam-host_{sample_id}.json"
+	threads: 2
+	shell:
+		"decontaminate.py --forward-reads {input.read} "
+		"--output-dir {config[output][decontam_host_assembled]} "
+		"--summary-file {params.decontam_host_summary_assembled} --organism human"

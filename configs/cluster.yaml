@@ -30,6 +30,14 @@ decontam_host_assembled:
   h_vmem: 10G
   mem_free: 8G
   m_mem_free: 7G
+kraken_classify_unassembled:
+  h_vem: 15G
+  mem_free: 15G
+  m_mem_free: 10G
+kraken_classify_assembled:
+  h_vem: 15G
+  mem_free: 15G
+  m_mem_free: 10G
 gzip: 
   h_vmem: 10G
   mem_free: 8G

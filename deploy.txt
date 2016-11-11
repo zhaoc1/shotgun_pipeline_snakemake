@@ -1,0 +1,14 @@
+conda config --add channels zhaoc1 
+conda config --add channels r 
+conda config --add channels bioconda
+
+conda config --get channels
+
+conda create --name shotgun snakemake --yes
+source activate shotgun
+conda install fastqc trimmomatic bwa bowtie jellyfish=1 kraken clark biopython pear --yes
+
+## conda only keep track of the packages it installed...
+pip install git+https://github.com/zhaoc1/dnabc.git
+pip install git+https://github.com/zhaoc1/illqc.git
+pip install git+https://github.com/zhaoc1/decontam.git

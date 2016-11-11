@@ -1,0 +1,66 @@
+## assign taxonomic labels to short DNA reads
+rule kraken_classify_unassembled:
+	input:
+		read1 = config["output"]["decontam_host_unassembled"] + "/{sample_id}.unassembled.forward.fastq",
+		read2 = config["output"]["decontam_host_unassembled"] + "/{sample_id}.unassembled.reverse.fastq"
+	output:
+		config["output"]["kraken_classify_unassembled"] + "/raw/{sample_id}.raw.tsv"
+	threads: 8
+	shell:
+		"""
+		kraken --db {config[kraken][db]} --threads {threads} --paired \
+		--fastq-input {input.read1} {input.read2} > {output}
+		"""
+
+rule kraken_report_unassembled:
+	input:
+		config["output"]["kraken_classify_unassembled"] + "/raw/{sample_id}.raw.tsv"
+	output:
+		config["output"]["kraken_classify_unassembled"] + "/{sample_id}.taxa.tsv"
+	threads: 2
+	shell:
+		"kraken-report --db {config[kraken][db]} {input} > {output}"
+
+
+rule kraken_classify_assembled:
+	input:
+		config["output"]["decontam_host_assembled"] + "/{sample_id}.assembled.fastq"
+	output:
+		config["output"]["kraken_classify_assembled"] + "/raw/{sample_id}.raw.tsv"
+	threads: 8
+	shell:
+		"kraken --db {config[kraken][db]} --threads {threads} --fastq-input {input} > {output}"
+		
+
+rule kraken_report_assembled:
+	input:
+		config["output"]["kraken_classify_assembled"] + "/raw/{sample_id}.raw.tsv"
+	output:
+		config["output"]["kraken_classify_assembled"] + "/{sample_id}.taxa.tsv"
+	threads: 2
+	shell:
+		"kraken-report --db {config[kraken][db]} {input} > {output}"
+
+rule kraken_mpa_report_unassembled:
+	input:
+		config["output"]["kraken_classify_unassembled"] + "/raw/{sample_id}.raw.tsv"
+	output:
+		config["output"]["kraken_classify_unassembled"] + "/{sample_id}.mpa.tsv"
+	threads: 2
+	shell:
+		"""
+		kraken-mpa-report --db {config[kraken][db]} \
+		{input} > {output}
+		"""
+
+rule kraken_mpa_report_assembled:
+	input:
+		config["output"]["kraken_classify_assembled"] + "/raw/{sample_id}.raw.tsv"
+	output:
+		config["output"]["kraken_classify_assembled"] + "/{sample_id}.mpa.tsv"
+	threads: 2
+	shell:
+		"""
+		kraken-mpa-report --db {config[kraken][db]} \
+		{input} > {output}
+		"""

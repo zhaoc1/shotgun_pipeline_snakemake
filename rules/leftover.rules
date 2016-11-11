@@ -1,0 +1,23 @@
+rule kraken_aggregate_report_unassembled:
+	input:
+		expand(config["output"]["kraken_classify_unassembled"] + "/raw/{sample_id}.raw.tsv", sample_id = SAMPLE_IDS)
+	output:
+		config["output"]["kraken_classify_unassembled"] + "/{sample_id}.mpa.tsv"
+	threads: 2
+	shell:
+		"""
+		kraken-mpa-report --db {config[kraken][db]} \
+		{' '.join(s for s in input)} > {output}
+		"""
+
+rule kraken_aggregate_report_assembled:
+	input:
+		expand(config["output"]["kraken_classify_assembled"] + "/raw/{sample_id}.raw.tsv", sample_id = SAMPLE_IDS)
+	output:
+		config["output"]["kraken_classify_assembled"] + "/{sample_id}.mpa.tsv"
+	threads: 2
+	shell:
+		"""
+		kraken-mpa-report --db {config[kraken][db]} \
+		{' '.join(s for s in input)} > {output}
+		"""
