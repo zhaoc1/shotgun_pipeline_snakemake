@@ -9,7 +9,8 @@ load_shotgun_pipeline_environment: source activate shotgun-pipeline
 
 
 # customized settings for a project ---- START
-data_dir: /mnt/lustre/users/zhaoc1/largefiles/test
+data_dir: /home/zhaoc1/test/testlarge
+#data_dir: /mnt/lustre/users/zhaoc1/largefiles/testkraken
 lane_num: "001"
 barcodes: "barcodes.txt"
 # customized settings for a project ---- DONE
@@ -27,9 +28,15 @@ output: # subdirectories in data_dir
     decontam_host_assembled: decontam_host_assembled_results
     kraken_classify_unassembled: kraken_classify_unassembled_results
     kraken_classify_assembled: kraken_classify_assembled_results
+    krona: krona_results
+    assembly: assembly_results
 
 ## parameters for each rules
 stitch:
     memory: 1G
 kraken:
-    db: /mnt/isilon/microbiome/biodata/krakendb/viruses
+    db: /mnt/isilon/microbiome/biodata/krakendb/standard
+krona:
+    taxa: /mnt/isilon/microbiome/biodata/kronadb/
+cap3:
+    bin: /home/zhaoc1/CAP3

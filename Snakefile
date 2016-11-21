@@ -1,7 +1,17 @@
+"""
+run on respublica
+
+unset PYTHONHOME
+unset PYTHONPATH
+source activate shotgun-pipeline
+
+snakemake -j 3 --cluster-config configs/cluster.json -p -c "qsub -cwd -r n -V -l h_vmem={cluster.h_vmem} -l mem_free={cluster.mem_free} -pe smp {threads}"
+"""
+
 ####
 # shotgun metagenomic pipeline
 # author: Chunyu Zhao
-# time: 2016-11-09
+# time: 2016-11-21
 ####
 
 import glob
@@ -13,23 +23,12 @@ import sys
 import shutil
 import yaml
 import subprocess
+import time
 from functions import * 
-
-"""
-run on respublica
-
-unset PYTHONHOME
-unset PYTHONPATH
-source activate shotgun-pipeline
-
-snakemake -j 16 --cluster-config configs/cluster.yaml -c "qsub -r n -V -l h_vmem={cluster.h_vmem} -l mem_free={cluster.mem_free} -pe smp {threads}"
-snakemake -j 2 --cluster-config configs/cluster.test.yaml -c "qsub -r n -V -l h_vmem={cluster.h_vmem} -l mem_free={cluster.mem_free} -pe smp {threads}"
-"""
 
 configfile: "configs/localconfig.yaml"
 workdir: config["data_dir"]
-
-#shell.prefix("source ~/.bashrc; ")
+starttime = int(time.time())
 
 include:
 	"rules/targets.rules"
@@ -39,6 +38,8 @@ include:
 	"rules/decontam.rules"
 include:
 	"rules/kraken.rules"
+include:
+	"rules/assembly.rules"
 include:
 	"rules/reports.rules"
 

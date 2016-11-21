@@ -1,0 +1,26 @@
+{
+    "__default__" :
+    {
+        "h_vmem" : "8G",
+        "mem_free" : "6G",
+        "m_mem_free" : "4G"
+    },
+    "demultiplex" :
+    {
+        "h_vmem" : "15G",
+        "mem_free" : "14G",
+        "m_mem_free" : "10G"
+    },
+    "kraken_classify_unassembled" :
+    {
+        "h_vmem" : "15G",
+        "mem_free" : "14G",
+        "m_mem_free" : "10G"
+    },
+    "kraken_classify_unassembled" :
+    {
+        "h_vmem" : "15G",
+        "mem_free" : "14G",
+        "m_mem_free" : "10G"
+    }
+}

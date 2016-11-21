@@ -1,0 +1,56 @@
+rule merge_fq:
+	input:
+		read1 = config["output"]["decontam_host_unassembled"] + 
+		"/{sample_id}.unassembled.forward.fastq",
+		read2 = config["output"]["decontam_host_unassembled"] + "/{sample_id}.unassembled.reverse.fastq"
+	output:
+		config["output"]["assembly"] + "/merged_reads/{sample_id}_merged.fasta"
+	shell:
+		"fq2fa --merge --filter {input.read1} {input.read2} {output}"
+
+rule build_contigs:
+	input:
+		config["output"]["assembly"] + "/merged_reads/{sample_id}_merged.fasta"
+	output:
+		config["output"]["assembly"] + "/{sample_id}_assembly/contig.fa"
+	log:
+		config["output"]["assembly"] + "/log/idba_ud/{sample_id}.out"
+	params:
+		out_fp = config["output"]["assembly"] + "/{sample_id}_assembly"
+	threads: 1
+	shell:
+		"""		
+		idba_ud -l {input} --num_threads {threads} \
+	        --out {params.out_fp} --pre_correction &> {log} ||
+        	if [ ! -a {output} ]; then cp {params.out_fp}/contig-100.fa {output}; fi
+		"""
+
+rule cap3:
+	input:
+		config["output"]["assembly"] + "/{sample_id}_assembly/contig.fa"
+	output:
+		config["output"]["assembly"] + "/{sample_id}_assembly/contig-cap.fa"
+	log:
+		expand(config["output"]["assembly"] + "/log/cap3/{{sample_id}}-{starttime}.log", 
+		starttime=starttime)
+	shell:
+		"""
+		{config[cap3][bin]}/cap3 {input} &> {log} && \
+		cat {input}.cap.singlets {input}.cap.contigs > {output}
+		"""
+
+rule minimo:
+	input:
+		config["output"]["assembly"] + "/{sample_id}_assembly/contig.fa"
+	output:
+		block = temp(config["output"]["assembly"]+"/{sample_id}_assembly/contig-contigs.fa"),
+		unblock = config["output"]["assembly"]+"/{sample_id}_assembly/minimo-contigs.fa"
+	log:
+		config["output"]["assembly"] + "/log/minimo/{sample_id}.out"
+	shell:
+		"""
+		Minimo {input} -D FASTA_EXP=1 &> {log} && \
+		perl unblock_fasta.pl {output.block} > 
+		{output.unblock}
+		"""
+        

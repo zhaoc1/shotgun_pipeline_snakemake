@@ -4,24 +4,6 @@
 SAMPLE_IDS = get_sample_ids_from_barcode(config["barcodes"])
 SAMPLE_IDS = ["PCMP_" + s for s in SAMPLE_IDS]
 
-
-####################
-## demultiplex + QC
-####################
-
-TARGET_FPS1 = expand(config["output"]["dnabc"] + "/{sample_id}_{read}.fastq", sample_id=SAMPLE_IDS, read=["R1","R2"])
-
-TARGET_FPS2 = expand(config["output"]["illqc"] + "/{sample_id}_{read}.fastq", sample_id=SAMPLE_IDS, read=["R1","R2"])
-
-TARGET_FPS3 = expand(config["output"]["stitch"] + "/{sample_id}.{type}.fastq",sample_id=SAMPLE_IDS, type=["assembled","discarded","unassembled.forward","unassembled.reverse"])
-
-####################
-## decontam
-####################
-TARGET_FPS4 = expand(config["output"]["decontam_host_assembled"] + "/{sample_id}.assembled.fastq",sample_id=SAMPLE_IDS)
-TARGET_FPS5 = expand(config["output"]["decontam_host_unassembled"] + "/{sample_id}.{type}.fastq",sample_id=SAMPLE_IDS, type=["unassembled.forward","unassembled.reverse"])
-
-
 ####################
 ## kraken classify
 ####################
@@ -34,9 +16,38 @@ TARGET_FPS9 = expand(config["output"]["kraken_classify_assembled"]+
 
 TARGET_KRAKEN = TARGET_FPS8 + TARGET_FPS9 
 
-TARGET_TSV = ["preprocess_summary.tsv"]
+####################
+## krona
+####################
+TARGET_FPS10 = expand(
+config["output"]["krona"] + 
+"/{sample_id}-krona.html", sample_id=SAMPLE_IDS)
 
-rule make_decontam:
-	input: TARGET_FPS4 + TARGET_FPS5
+####################
+## contig assembly
+####################
+TARGET_FPS11 = expand(
+config["output"]["assembly"] + "/merged_reads/{sample_id}_merged.fasta", sample_id=SAMPLE_IDS)
 
-TARGET_FPS = TARGET_KRAKEN
+TARGET_FPS12 = expand(
+config["output"]["assembly"] + 
+"/{sample_id}_assembly/contig.fa", sample_id=SAMPLE_IDS)
+
+TARGET_FPS13= expand(
+config["output"]["assembly"] +
+"/{sample_id}_assembly/minimo-contigs.fa", sample_id=SAMPLE_IDS)
+
+TARGET_FPS14= expand(
+config["output"]["assembly"] +
+"/{sample_id}_assembly/contig-cap.fa", sample_id=SAMPLE_IDS)
+
+rule make_kraken:
+	input: TARGET_FPS8
+rule make_krona:
+	input: TARGET_FPS10
+rule make_merge:
+	input: TARGET_FPS11
+rule make_contig:
+	input: TARGET_FPS12
+
+TARGET_FPS = TARGET_FPS14 + TARGET_FPS12 + TARGET_FPS11
